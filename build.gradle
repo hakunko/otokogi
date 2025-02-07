@@ -24,16 +24,18 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	 implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // Thymeleaf用
+    implementation 'org.springframework.boot:spring-boot-starter-web'  // Webアプリケーション用
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // Spring Data JPA
+    compileOnly 'org.projectlombok:lombok'  // Lombok（コンパイル時にコード生成）
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'  // 開発用ツール（自動リロード）
+    runtimeOnly 'org.postgresql:postgresql'  // PostgreSQLのJDBCドライバ（Supabase用）
+    annotationProcessor 'org.projectlombok:lombok'  // Lombokのアノテーション処理
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // テスト用
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit用
+    implementation 'org.springframework.security:spring-security-crypto'  // 暗号化関連
+}
+
 }
 
 tasks.named('test') {
