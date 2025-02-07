@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルカレンダー</title>
+    <style>
+        /* ヘッダーのデザイン */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            background: #fff;
+        }
+
+        .logo {
+            font-size: 24px;
+        }
+
+        /* ハンバーガーメニューに関するCSS */
+        .drawer_hidden {
+            display: none;
+        }
+
+        .drawer_open {
+            display: flex;
+            height: 60px;
+            width: 60px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 101; /* メニューより上 */
+            cursor: pointer;
+        }
+
+        .drawer_open span,
+        .drawer_open span:before,
+        .drawer_open span:after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 25px;
+            border-radius: 3px;
+            background: #333;
+            transition: 0.5s;
+            position: absolute;
+        }
+
+        .drawer_open span:before {
+            bottom: 8px;
+        }
+
+        .drawer_open span:after {
+            top: 8px;
+        }
+
+        /* チェックボックスがチェックされた時にアイコンが×印に変わる */
+        #drawer_input:checked ~ .drawer_open span {
+            background: rgba(255, 255, 255, 0);
+        }
+
+        #drawer_input:checked ~ .drawer_open span::before {
+            bottom: 0;
+            transform: rotate(45deg);
+        }
+
+        #drawer_input:checked ~ .drawer_open span::after {
+            top: 0;
+            transform: rotate(-45deg);
+        }
+
+        /* メニューのデザイン */
+        .nav_content {
+            width: 250px;  /* メニュー幅を小さく設定 */
+            height: 100%;
+            position: fixed;
+            top: 0;
+            right: -250px; /* 初期位置は右側に隠す */
+            z-index: 99;
+            background: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+            padding: 20px 0;
+        }
+
+        .nav_list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav_item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #drawer_input:checked ~ .nav_content {
+            right: 0;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 98;
+            transition: 0.5s;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1000px;
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+        .form-container a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .form-container a:hover {
+            background-color: #45a049;
+        }
+
+        canvas {
+            width: 100%;
+            height: 400px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .calendar-container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            width: 40px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td:hover {
+            background-color: #e7e7e7;
+            cursor: pointer;
+        }
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+	<header class="header">
+	    <!-- ヘッダーロゴ -->
+	    <div class="logo">ハンバーガーメニュー</div>
+	
+	    <!-- ハンバーガーメニュー -->
+	    <div class="nav">
+	        <!-- ハンバーガーアイコンをクリックするためのチェックボックス -->
+	        <input id="drawer_input" class="drawer_hidden" type="checkbox">
+	        <!-- ハンバーガーアイコン -->
+	        <label for="drawer_input" class="drawer_open"><span></span></label>
+	
+	        <!-- メニュー -->
+	        <nav class="nav_content">
+	            <ul class="nav_list">
+	                <li class="nav_item"><a th:href="@{'/home?name='+${name}}">ホーム</a></li>
+	                <li class="nav_item"><a href="#">メニュー2</a></li>
+	                <li class="nav_item"><a href="#">メニュー3</a></li>
+	                <li class="nav_item"><a th:href="@{'/otoko?name='+${name}}">漢気入力</a></li>
+	            </ul>
+	        </nav>
+	    </div>
+	</header>
+    <button onclick="previousMonth()">＜ 前月</button>
+    <h2 id="monthYear"></h2>
+    <table id="calendar"></table>
+    <button onclick="nextMonth()">次月 ＞</button>
+
+    <form action="/save" method="POST">
+        年：
+        <select name="year">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+        </select>
+        月：
+        <select name="month">
+            <option value="1">1月</option>
+            <option value="2">2月</option>
+            <option value="3">3月</option>
+            <option value="4">4月</option>
+            <option value="5">5月</option>
+            <option value="6">6月</option>
+            <option value="7">7月</option>
+            <option value="8">8月</option>
+            <option value="9">9月</option>
+            <option value="10">10月</option>
+            <option value="11">11月</option>
+            <option value="12">12月</option>
+        </select><br>
+
+        <!-- 日付の選択 -->
+        日：
+        <select name="day">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+            <option value="25">25</option>
+            <option value="26">26</option>
+            <option value="27">27</option>
+            <option value="28">28</option>
+            <option value="29">29</option>
+            <option value="30">30</option>
+            <option value="31">31</option>
+        </select><br>
+
+        勝敗：
+        <select name="win">
+            <option value="勝ち">勝ち</option>
+            <option value="負け">負け</option>
+        </select><br>
+
+        値段（マイナスをつけないで）：
+        <input type="text" name="price"><br>
+
+        <input type="hidden" id="name" name="name" th:value="${name}">
+
+        <button type="submit">送信</button>
+    </form>
+    あなたの利益は<p id="rieki">0円</p> 勝率は<div id="syuritu"></div>
+     <input type="buttun" name="name" th:value="${name}">
+	<form action="/del" method="post">
+		<button typ="submit">削除</button>
+	</form>
+<script>
+        const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+        let currentDate = new Date();
+        let expenses = [];  // ここでグローバルに定義
+		let money=0;
+        // サーバーからのnameパラメータを取得
+        const name = document.getElementById("name").value;
+
+        // サーバーからデータを取得してカレンダーを生成
+        function fetchExpenses() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth() + 1;  // JavaScriptの月は0から始まるので+1する
+
+            fetch(`/calendar-data?name=${name}&month=${month}`)
+                .then(response => response.json())
+                .then(data => {
+                    expenses = data;  // データをグローバル変数に保存
+                    generateCalendar();  // データ取得後にカレンダーを描画
+					                    
+					money = expenses.reduce((sum, expense) => sum + expense.price, 0);
+					
+					    // 合計金額を動的に埋め込むためにバックティックを使う
+					document.getElementById("rieki").innerHTML = `${money}円`; // 修正箇所
+                })
+                .catch(error => console.error("データ取得エラー:", error));
+        }
+	        
+
+        // カレンダーを生成する関数
+        function generateCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+
+            // ヘッダーを更新
+            document.getElementById("monthYear").textContent = `${monthNames[month]} ${year}`;
+
+            // カレンダーの表を作成
+            const table = document.getElementById("calendar");
+            table.innerHTML = "";
+
+            const daysOfWeek = ["日", "月", "火", "水", "木", "金", "土"];
+            let row = document.createElement("tr");
+
+            // 曜日ヘッダーを作成
+            daysOfWeek.forEach(day => {
+                let th = document.createElement("th");
+                th.textContent = day;
+                row.appendChild(th);
+            });
+            table.appendChild(row);
+
+            // 空白のセル（前月の最後の曜日から始めるため）
+            row = document.createElement("tr");
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                let td = document.createElement("td");
+                row.appendChild(td);
+            }
+
+            // 当月の日付を表示
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                let td = document.createElement("td");
+                td.textContent = day;
+		
+		    const expensesForDay = expenses.filter(e => e.day == day);
+		    
+		    if (expensesForDay.length > 0) {
+		        td.classList.add("expense");  // クラスを追加
+		
+		        // その日の金額を合計
+		        let totalPrice = expensesForDay.reduce((sum, expense) => sum + expense.price, 0);
+		        
+		        td.innerHTML += `<br>金額: ${totalPrice}円`;  // 合計金額を表示
+		    }
+
+                row.appendChild(td);
+
+                // 7日ごとに新しい行を作成
+                if (row.children.length === 7) {
+                    table.appendChild(row);
+                    row = document.createElement("tr");
+                }
+            }
+
+            // 最後の行を追加
+            if (row.children.length > 0) {
+                table.appendChild(row);
+            }
+        }
+
+        // 前月へ移動
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            fetchExpenses();  // 月を変更したら新しいデータを取得
+        }
+
+        // 次月へ移動
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            fetchExpenses();  // 月を変更したら新しいデータを取得
+        }
+
+        // 最初にデータを取得してカレンダーを生成
+        fetchExpenses();
+    </script>
+</body>
+</html>
+
