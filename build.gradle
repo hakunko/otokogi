@@ -40,3 +40,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+    archiveBaseName = 'otokogi'  // JARファイルの名前（任意で設定）
+    mainClass = 'com.example.demo.OtokogiApplication'  // メインクラスの指定
+}
