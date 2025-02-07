@@ -36,7 +36,6 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto'  // 暗号化関連
 }
 
-}
 
 tasks.named('test') {
 	useJUnitPlatform()
