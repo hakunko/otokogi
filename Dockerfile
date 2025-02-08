@@ -1,16 +1,20 @@
+# 基本の Java 21 イメージを指定
+FROM openjdk:21-jdk
 
-FROM gradle:7.5-jdk17 AS build
-
+# 作業ディレクトリを設定
 WORKDIR /app
 
-COPY . .
+# 必要なビルドツール（Gradle）をインストール
+RUN apt-get update && apt-get install -y gradle
 
-RUN gradle clean build -x test
+# アプリケーションコードをコピー
+COPY . /app
 
-FROM eclipse-temurin:21-alpine
+# Gradle でアプリケーションをビルド
+RUN ./gradlew clean build
 
-COPY --from=build /app/build/libs/otokogi-0.0.1-SNAPSHOT.jar demo.jar
+# ビルドした JAR ファイルを指定して実行
+CMD ["java", "-jar", "build/libs/otokogi-0.0.1-SNAPSHOT.jar"]
 
+# アプリケーションがリスンするポートを公開
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "demo.jar"]
