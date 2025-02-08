@@ -1,14 +1,21 @@
-# 1. Javaの公式イメージを使う（例: OpenJDK 17）
+# 基本の Java 21 イメージを指定
 FROM openjdk:21-jdk
 
-# 2. 作業ディレクトリを作成
+# 作業ディレクトリを設定
 WORKDIR /app
 
-# 3. JARファイルをコンテナにコピー
-COPY build/libs/otokogi-0.0.1-SNAPSHOT.jar app.jar
+# 必要なビルドツール（Gradle）をインストール
+RUN apt-get update && apt-get install -y gradle
 
-# 4. ポートを開放（Spring Bootのデフォルトは8080）
+# アプリケーションコードをコピー
+COPY . /app
+
+# Gradle でアプリケーションをビルド
+RUN ./gradlew clean build
+
+# ビルドした JAR ファイルを指定して実行
+CMD ["java", "-jar", "build/libs/otokogi-0.0.1-SNAPSHOT.jar"]
+
+# アプリケーションがリスンするポートを公開
 EXPOSE 8080
 
-# 5. アプリケーションの起動コマンド
-CMD ["java", "-jar", "app.jar"]
