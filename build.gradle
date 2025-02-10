@@ -1,18 +1,18 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.6.6'  // 2.x系に変更
+    id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
-
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)  // Java 11に変更
+        languageVersion = JavaLanguageVersion.of(17)  // Java 17に変更
     }
 }
+
 
 configurations {
     compileOnly {
@@ -25,36 +25,27 @@ repositories {
 }
 
 dependencies {
-    // Jakarta Persistence API (JPA)
-    implementation 'jakarta.persistence:jakarta.persistence-api:2.2.3'
-
-    // Hibernate ORM (JPA実装)
-    implementation 'org.hibernate:hibernate-core:5.6.0.Final'
-
-    // Spring Security Crypto (BCrypt)
-    implementation 'org.springframework.security:spring-security-crypto:5.6.0'
-
-    // その他の依存関係...
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' 
+    implementation 'org.springframework.boot:spring-boot-starter-web'  
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  
+    compileOnly 'org.projectlombok:lombok'  
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'  
     runtimeOnly 'mysql:mysql-connector-java:8.0.28'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    annotationProcessor 'org.projectlombok:lombok' 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' 
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  
+    implementation 'org.springframework.security:spring-security-crypto'
+
+    // Tomcatを使用するためにspring-boot-starter-tomcatをprovidedRuntimeとして追加
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
-
-
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-// WARではなくJARをビルドする設定
-bootJar {
-    archiveBaseName = 'otokogi'  // JARファイルの名前（任意で設定）
+bootWar {
+    archiveBaseName = 'otokogi'  // WARファイルの名前（任意で設定）
     mainClass = 'com.example.demo.OtokogiApplication'  // メインクラスの指定
 }
 
