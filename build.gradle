@@ -25,19 +25,16 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' 
-    implementation 'org.springframework.boot:spring-boot-starter-web'  
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  
-    compileOnly 'org.projectlombok:lombok'  
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'  
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'jakarta.persistence:jakarta.persistence-api:2.2.3'  // Jakarta Persistence API
+    implementation 'org.hibernate:hibernate-core:5.6.0.Final'  // Hibernateのバージョン
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java:8.0.28'
-    annotationProcessor 'org.projectlombok:lombok' 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test' 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  
-    implementation 'org.springframework.security:spring-security-crypto'
-
-    // Tomcatを使用するためにspring-boot-starter-tomcatをruntimeOnlyとして追加
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-tomcat'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 
