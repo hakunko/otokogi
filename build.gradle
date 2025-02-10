@@ -9,10 +9,9 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)  // Java 17に変更
+        languageVersion = JavaLanguageVersion.of(11)  // Java 11に変更
     }
 }
-
 
 configurations {
     compileOnly {
@@ -44,8 +43,9 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-bootWar {
-    archiveBaseName = 'otokogi'  // WARファイルの名前（任意で設定）
+// WARではなくJARをビルドする設定
+bootJar {
+    archiveBaseName = 'otokogi'  // JARファイルの名前（任意で設定）
     mainClass = 'com.example.demo.OtokogiApplication'  // メインクラスの指定
 }
 
