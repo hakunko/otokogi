@@ -223,7 +223,12 @@
                     groupedData[entry.name][dateKey] += entry.price;
                 });
 
-                const labels = [...new Set(data.map(entry => `${entry.month}/${entry.day}`))].sort();
+               const labels = [...new Set(data.map(entry => `${entry.month}/${entry.day}`))];
+				labels.sort((a, b) => {
+				    const [monthA, dayA] = a.split("/").map(Number);
+				    const [monthB, dayB] = b.split("/").map(Number);
+				    return new Date(year, monthA - 1, dayA) - new Date(year, monthB - 1, dayB);
+				});
 
                 const datasets = Object.keys(groupedData).map((name, index) => {
                     return {

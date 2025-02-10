@@ -1,49 +1,50 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.1'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // Thymeleaf用
-    implementation 'org.springframework.boot:spring-boot-starter-web'  // Webアプリケーション用
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // Spring Data JPA
-    compileOnly 'org.projectlombok:lombok'  // Lombok（コンパイル時にコード生成）
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'  // 開発用ツール（自動リロード）
-    runtimeOnly 'org.postgresql:postgresql'  // PostgreSQLのJDBCドライバ（Supabase用）
-    annotationProcessor 'org.projectlombok:lombok'  // Lombokのアノテーション処理
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // テスト用
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit用
-    implementation 'org.springframework.security:spring-security-crypto'  // 暗号化関連
-     implementation 'org.postgresql:postgresql:42.2.5'
-    
-}
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' 
+    implementation 'org.springframework.boot:spring-boot-starter-web'  
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  
+    compileOnly 'org.projectlombok:lombok'  
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'  
+    runtimeOnly 'mysql:mysql-connector-java:8.0.28'
+    annotationProcessor 'org.projectlombok:lombok' 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' 
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  
+    implementation 'org.springframework.security:spring-security-crypto'
 
+    // Tomcatを使用するためにspring-boot-starter-tomcatをprovidedRuntimeとして追加
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+}
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
-bootJar {
-    archiveBaseName = 'otokogi'  // JARファイルの名前（任意で設定）
+bootWar {
+    archiveBaseName = 'otokogi'  // WARファイルの名前（任意で設定）
     mainClass = 'com.example.demo.OtokogiApplication'  // メインクラスの指定
 }
+
