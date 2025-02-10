@@ -36,9 +36,10 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  
     implementation 'org.springframework.security:spring-security-crypto'
 
-    // Tomcatを使用するためにspring-boot-starter-tomcatをprovidedRuntimeとして追加
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    // Tomcatを使用するためにspring-boot-starter-tomcatをruntimeOnlyとして追加
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-tomcat'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
